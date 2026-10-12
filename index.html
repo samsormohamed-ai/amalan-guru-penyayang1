@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Amalan Guru Penyayang</title>
+  <meta name="description" content="Laporan Amalan Guru Penyayang (AGP) – SK Jawi">
+  <meta name="theme-color" content="#0f766e">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icon-192.png">
+
+  <!-- iPhone / iPad -->
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AGP SK Jawi">
+
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0f766e; font-family: system-ui, sans-serif; }
+    #app { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: #fff;
+           padding-top: env(safe-area-inset-top); box-sizing: border-box; }
+    #loader { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center;
+              justify-content: center; gap: 14px; color: #fff; background: #0f766e; transition: opacity .4s; }
+    #loader img { width: 96px; height: 96px; border-radius: 22px; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+    #loader .spin { width: 28px; height: 28px; border: 3px solid rgba(255,255,255,.35);
+                    border-top-color: #fff; border-radius: 50%; animation: s 0.9s linear infinite; }
+    #loader small { opacity: .85; }
+    #fallback { display: none; margin-top: 8px; background: #fff; color: #0f766e; border: 0;
+                padding: 10px 18px; border-radius: 999px; font-weight: 600; font-size: 15px; text-decoration: none; }
+    #offline { display: none; position: fixed; left: 0; right: 0; bottom: 0; padding: 10px; text-align: center;
+               background: #b91c1c; color: #fff; font-size: 14px; z-index: 10; }
+    @keyframes s { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div id="loader">
+    <img src="icon-192.png" alt="AGP">
+    <div><strong>Amalan Guru Penyayang</strong></div>
+    <small>Senyum · Sapa · Salam · Sudi</small>
+    <div class="spin"></div>
+    <a id="fallback" target="_top">Buka aplikasi</a>
+  </div>
+
+  <iframe id="app" title="Amalan Guru Penyayang" allow="camera; clipboard-write" ></iframe>
+  <div id="offline">Tiada sambungan internet. Sila semak data / Wi-Fi.</div>
+
+  <script>
+    // ==========================================================
+    // TUKAR DI SINI: tampal URL Web App Apps Script AGP anda
+    // (yang berakhir dengan /exec)
+    // ==========================================================
+    const APP_URL = "https://script.google.com/macros/s/TAMPAL_ID_DEPLOYMENT_ANDA/exec";
+
+    const frame = document.getElementById("app");
+    const loader = document.getElementById("loader");
+    const fallback = document.getElementById("fallback");
+    fallback.href = APP_URL;
+
+    frame.src = APP_URL;
+    frame.addEventListener("load", () => {
+      loader.style.opacity = "0";
+      setTimeout(() => loader.style.display = "none", 400);
+    });
+    // Jika lambat dimuatkan, tunjuk butang buka terus
+    setTimeout(() => { fallback.style.display = "inline-block"; }, 8000);
+
+    const off = document.getElementById("offline");
+    const net = () => off.style.display = navigator.onLine ? "none" : "block";
+    addEventListener("online", net); addEventListener("offline", net); net();
+
+    if ("serviceWorker" in navigator) {
+      addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+    }
+  </script>
+</body>
+</html>
